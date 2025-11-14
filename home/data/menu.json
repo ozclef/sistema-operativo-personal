@@ -1,0 +1,16 @@
+{
+  "principal": [
+    { "id": "inicio", "label": "Inicio" },
+    { "id": "proyectos", "label": "Proyectos" },
+    { "id": "contacto", "label": "Contacto" }
+  ],
+  "subempresas": [
+    { "id": "cleftech", "label": "ClefTech" },
+    { "id": "mesacloud", "label": "MesaCloud" },
+    { "id": "mercaflow", "label": "MercaFlow" }
+  ],
+  "config": [
+    { "id": "apariencia", "label": "Apariencia del sistema" },
+    { "id": "ajustes", "label": "Ajustes avanzados" }
+  ]
+}
