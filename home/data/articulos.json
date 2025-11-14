@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "titulo": "La teoría del impulso creativo",
+    "miniatura": "https://i.imgur.com/random.png",
+    "contenido": "<p>Todo lo que te expliqué ese día...</p>",
+    "iframe": "https://www.youtube.com/embed/4j8Z1wJMRL0",
+    "fecha": "2025-11-14 02:10",
+    "vistas": 0
+  },
+  {
+    "id": 2,
+    "titulo": "Sistema OS modular Bio-us",
+    "miniatura": null,
+    "contenido": "<p>Tus módulos, tu panel, tu ecosistema.</p>",
+    "iframe": null,
+    "fecha": "2025-11-13 17:20",
+    "vistas": 12
+  }
+]
