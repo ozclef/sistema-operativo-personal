@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel TecnoFix - Módulo</title>
+
+    <style>
+        :root{
+            --bg: #0f1115;
+            --fg: #e8e8e8;
+            --card: #181a20;
+            --accent: #4af;
+        }
+
+        body{
+            margin: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: "Segoe UI", sans-serif;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* NAV LATERAL */
+        .sidebar{
+            width: 70px;
+            background: #13151b;
+            transition: width .3s;
+            overflow: hidden;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        .sidebar:hover{
+            width: 230px;
+        }
+
+        .sidebar h2{
+            margin: 20px;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+
+        .menu{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu li a{
+            display: block;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: var(--fg);
+            border-radius: 6px;
+            margin: 4px 10px;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .menu li a:hover{
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* RGB GLOW */
+        @keyframes rgbGlow{
+            0%{ box-shadow: 0 0 12px #f00; }
+            33%{ box-shadow: 0 0 12px #0f0; }
+            66%{ box-shadow: 0 0 12px #00f; }
+            100%{ box-shadow: 0 0 12px #f00; }
+        }
+
+        /* HEADER SUPERIOR */
+        header{
+            height: 60px;
+            background: var(--card);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            animation: rgbGlow 4s infinite linear;
+        }
+
+        /* MAIN */
+        main{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content{
+            padding: 20px;
+        }
+
+        .card{
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* UL de archivos */
+        ul.file-list{
+            list-style: none;
+            padding: 0;
+        }
+        ul.file-list li{
+            margin: 6px 0;
+        }
+        ul.file-list a{
+            color: var(--accent);
+            text-decoration: none;
+        }
+        ul.file-list a:hover{
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- NAV LATERAL -->
+    <aside class="sidebar">
+        <h2>Menu</h2>
+        <ul class="menu">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Tickets</a></li>
+            <li><a href="#">Ventas</a></li>
+            <li><a href="#">Inventario</a></li>
+            <li><a href="#">Reparaciones</a></li>
+            <li><a href="#">Clientes</a></li>
+        </ul>
+    </aside>
+
+    <!-- ZONA CENTRAL -->
+    <main>
+
+        <header>
+            <h1 style="margin:0;">Panel Administrativo</h1>
+        </header>
+
+        <div class="content">
+
+            <div class="card">
+                <h2>Archivos / Módulos</h2>
+
+                <ul class="file-list">
+                    <!-- aquí pegas todo tu árbol -->
+                    <li><a href="apps/index.html">apps/index.html</a></li>
+                    <li><a href="apps/2048_game.html">2048_game.html</a></li>
+                    <li><a href="apps/snake_game.html">snake_game.html</a></li>
+                    <li><a href="background/chat/index.html">chat/index.html</a></li>
+                    <li><a href="docs/index.html">docs/index.html</a></li>
+                    <li><a href="dist/css/style.css">style.css</a></li>
+                    <li><a href="pro.html">pro.html</a></li>
+                    <li><a href="qrcode.html">qrcode.html</a></li>
+                    <!-- ... y así sigues metiendo todos -->
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Módulo Activo</h2>
+                <p>Este espacio está listo para que pegues tu primer módulo (tickets, ventas, inventario, valuaciones, etc).</p>
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>
