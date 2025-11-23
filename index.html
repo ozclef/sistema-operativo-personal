@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Índice de archivos — CyberBugSNK</title>
+<style>
+  :root{
+    --bg:#0b0b10;
+    --panel:#0f1720;
+    --muted:#9aa3b2;
+    --accent:#6ee7b7;
+    --accent-2:#7dd3fc;
+    --border:rgba(255,255,255,0.06);
+    --glass: rgba(255,255,255,0.03);
+    --glass-2: rgba(255,255,255,0.02);
+  }
+  html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg, var(--bg), #07070a 80%);color:#e6eef6}
+  .app {
+    max-width:1200px;
+    margin:28px auto;
+    padding:20px;
+    border-radius:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+    border:1px solid var(--border);
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    gap:18px;
+  }
+
+  /* PANE LEFT (botón + descripción) */
+  .sidebar {
+    padding:18px;
+    border-radius:10px;
+    background: linear-gradient(180deg,var(--glass),var(--glass-2));
+    min-height:400px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .brand { font-weight:700; letter-spacing:0.6px; color:var(--accent); font-family: "Courier New", monospace; }
+  .subtitle { color:var(--muted); font-size:13px; }
+
+  /* BOTÓN EXPANDIBLE */
+  .expand-wrapper { position:relative; display:block; margin-top:6px; }
+  .expand-btn {
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#032; padding:10px 14px; border-radius:12px; font-weight:700;
+    border:none; cursor:pointer; box-shadow: 0 6px 18px rgba(11,22,34,0.6);
+    transition:transform .18s ease, box-shadow .18s ease;
+    user-select:none;
+  }
+  .expand-btn:active{ transform:translateY(1px) }
+  .expand-hint { font-size:12px; color:#043; opacity:0.9; font-weight:600 }
+
+  /* MENU que aparece al hover (o con .open por JS) */
+  .menu {
+    position:absolute;
+    left:0; top:60px;
+    width:260px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;
+    border:1px solid var(--border);
+    padding:10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    transform-origin: top center;
+    transform:scaleY(0.85) translateY(-6px);
+    opacity:0;
+    max-height:0;
+    overflow:hidden;
+    transition: all .28s cubic-bezier(.2,.9,.3,1);
+    z-index:40;
+  }
+  .expand-wrapper:hover .menu,
+  .expand-wrapper.open .menu {
+    opacity:1;
+    transform:scaleY(1) translateY(0);
+    max-height:600px;
+  }
+
+  .menu a { display:block; padding:8px 10px; border-radius:8px; color:var(--accent-2); text-decoration:none; font-size:14px; }
+  .menu a:hover { background: rgba(255,255,255,0.02); color: #fff; }
+
+  /* MAIN: lista larga */
+  .main {
+    padding:18px;
+    border-radius:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    border:1px solid var(--border);
+    min-height:400px;
+    overflow:auto;
+  }
+
+  /* Lista estilizada */
+  ul.file-list{ list-style:none; padding:12px; margin:0; display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:8px;}
+  ul.file-list li { background: rgba(255,255,255,0.014); padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.02); display:flex; align-items:center; gap:8px; }
+  ul.file-list li a { color:var(--accent-2); text-decoration:none; font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .badge { margin-left:auto; font-size:12px; color:var(--muted); background:transparent; padding:4px 6px; border-radius:6px; border:1px solid rgba(255,255,255,0.03) }
+
+  /* small helpers */
+  .topline { display:flex; gap:8px; align-items:center; justify-content:space-between; }
+  .note { color:var(--muted); font-size:13px; margin-top:6px; }
+
+  /* responsive */
+  @media (max-width:840px){
+    .app { grid-template-columns: 1fr; padding:12px; }
+    .menu { left:10px; right:10px; width:auto; }
+    ul.file-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  }
+
+  /* estilos para labels/inputs tipo "console label" */
+  .label-chip { display:inline-block; padding:6px 8px; border-radius:999px; background: rgba(255,255,255,0.02); color:var(--muted); font-size:12px; border:1px solid rgba(255,255,255,0.02); }
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">CyberBugSNK • Index</div>
+        <div class="subtitle">Lista automática de archivos / demos / docs</div>
+      </div>
+
+      <div class="topline">
+        <div>
+          <div class="label-chip">Modo: Simulado</div>
+        </div>
+        <div class="label-chip">Archivos: muchos</div>
+      </div>
+
+      <div class="expand-wrapper" id="expWrap">
+        <button class="expand-btn" id="expandBtn">
+          ☰ Opciones rápidas
+          <span style="opacity:.9;font-weight:700;color:#002b22;margin-left:8px;padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.2)">↯</span>
+        </button>
+
+        <div class="menu" aria-hidden="true">
+          <!-- links de atajo; personaliza -->
+          <a href="#top">Ir arriba</a>
+          <a href="#demos">Demos</a>
+          <a href="#docs">Docs & API</a>
+          <a href="#media">Media</a>
+          <a href="#tools">Herramientas</a>
+          <a href="#export">Exportar JSON</a>
+        </div>
+      </div>
+
+      <div class="note">Hover al botón para ver opciones. En móvil toca una vez para abrir, otra para cerrar.</div>
+    </aside>
+
+    <main class="main" id="main">
+      <h2 id="top" style="margin-top:0;color:var(--accent)">Archivo / Demo Index</h2>
+      <p class="note">Clic en cualquier nombre para abrir (en localhost o cuando los archivos existan). Puedes modificar las rutas si están en subcarpetas.</p>
+
+      <ul class="file-list">
+        <!-- Empieza la lista generada -->
+        <li><a href="./.github">.github</a><span class="badge">dir</span></li>
+        <li><a href="./08-22">08-22</a><span class="badge">dir</span></li>
+        <li><a href="./js">js</a><span class="badge">dir</span></li>
+        <li><a href="./index.html">index.html</a><span class="badge">file</span></li>
+        <li><a href="./api-docs">api-docs</a><span class="badge">dir</span></li>
+        <li><a href="./dist">dist</a><span class="badge">dir</span></li>
+        <li><a href="./favicon-16x16.png">favicon-16x16.png</a><span class="badge">img</span></li>
+        <li><a href="./favicon-32x32.png">favicon-32x32.png</a><span class="badge">img</span></li>
+        <li><a href="./index.css">index.css</a><span class="badge">css</span></li>
+        <li><a href="./oauth2-redirect.html">oauth2-redirect.html</a><span class="badge">file</span></li>
+        <li><a href="./swagger-initializer.js">swagger-initializer.js</a><span class="badge">js</span></li>
+        <li><a href="./swagger-ui-bundle.js">swagger-ui-bundle.js</a><span class="badge">js</span></li>
+        <li><a href="./swagger-ui-bundle.js.map">swagger-ui-bundle.js.map</a><span class="badge">map</span></li>
+        <li><a href="./swagger-ui-es-bundle-core.js">swagger-ui-es-bundle-core.js</a><span class="badge">js</span></li>
+        <li><a href="./swagger-ui-es-bundle-core.js.map">swagger-ui-es-bundle-core.js.map</a><span class="badge">map</span></li>
+        <li><a href="./swagger-ui-es-bundle.js">swagger-ui-es-bundle.js</a><span class="badge">js</span></li>
+        <li><a href="./swagger-ui-es-bundle.js.map">swagger-ui-es-bundle.js.map</a><span class="badge">map</span></li>
+        <li><a href="./swagger-ui-standalone-preset.js">swagger-ui-standalone-preset.js</a><span class="badge">js</span></li>
+        <li><a href="./swagger-ui-standalone-preset.js.map">swagger-ui-standalone-preset.js.map</a><span class="badge">map</span></li>
+        <li><a href="./swagger-ui.css">swagger-ui.css</a><span class="badge">css</span></li>
+        <li><a href="./swagger-ui.css.map">swagger-ui.css.map</a><span class="badge">map</span></li>
+        <li><a href="./swagger-ui.js">swagger-ui.js</a><span class="badge">js</span></li>
+        <li><a href="./swagger-ui.js.map">swagger-ui.js.map</a><span class="badge">map</span></li>
+        <li><a href="./media">media</a><span class="badge">dir</span></li>
+        <li><a href="./index.html">index.html</a><span class="badge">file</span></li>
+        <li><a href="./LICENSE">LICENSE</a><span class="badge">txt</span></li>
+        <li><a href="./README.md">README.md</a><span class="badge">md</span></li>
+        <li><a href="./index.html">index.html</a><span class="badge">file</span></li>
+        <li><a href="./openapi.json">openapi.json</a><span class="badge">json</span></li>
+        <li><a href="./requirements.txt">requirements.txt</a><span class="badge">txt</span></li>
+        <li><a href="./swagger-ui.version">swagger-ui.version</a><span class="badge">txt</span></li>
+        <li><a href="./apps">apps</a><span class="badge">dir</span></li>
+        <li><a href="./media">media</a><span class="badge">dir</span></li>
+        <li><a href="./1.webp">1.webp</a><span class="badge">img</span></li>
+        <li><a href="./2.webp">2.webp</a><span class="badge">img</span></li>
+        <li><a href="./unfinished">unfinished</a><span class="badge">dir</span></li>
+        <li><a href="./ai-powereddrawingguessinggame.html">ai-powereddrawingguessinggame.html</a><span class="badge">demo</span></li>
+        <li><a href="./generate.html">generate.html</a><span class="badge">demo</span></li>
+        <li><a href="./image.html">image.html</a><span class="badge">demo</span></li>
+        <li><a href="./image2.html">image2.html</a><span class="badge">demo</span></li>
+        <li><a href="./image_slider_carousel.html">image_slider_carousel.html</a><span class="badge">demo</span></li>
+        <li><a href="./imagegallerywithexifviewer.html">imagegallerywithexifviewer.html</a><span class="badge">demo</span></li>
+        <li><a href="./instagram-like_photo_feed_mock_data.html">instagram-like_photo_feed_mock_data.html</a><span class="badge">demo</span></li>
+        <li><a href="./markdown_blog_engine_one_html.html">markdown_blog_engine_one_html.html</a><span class="badge">demo</span></li>
+        <li><a href="./mini_spotify__audio_player.html">mini_spotify__audio_player.html</a><span class="badge">demo</span></li>
+        <li><a href="./pomodorotimerwithproductivitystats.html">pomodorotimerwithproductivitystats.html</a><span class="badge">demo</span></li>
+        <li><a href="./qr-code_generator__reader.html">qr-code_generator__reader.html</a><span class="badge">demo</span></li>
+        <li><a href="./real-time_chat_websockets_placeholder.html">real-time_chat_websockets_placeholder.html</a><span class="badge">demo</span></li>
+        <li><a href="./unsplash_photo_search.html">unsplash_photo_search.html</a><span class="badge">demo</span></li>
+        <li><a href="./url_shortener_frontend_only.html">url_shortener_frontend_only.html</a><span class="badge">demo</span></li>
+        <li><a href="./weather_forecast_display_(using_a_public_api).html">weather_forecast_display_(using_a_public_api).html</a><span class="badge">demo</span></li>
+        <li><a href="./2048_game.html">2048_game.html</a><span class="badge">demo</span></li>
+        <li><a href="./api_tester_like_postman-lite.html">api_tester_like_postman-lite.html</a><span class="badge">demo</span></li>
+        <li><a href="./calculator.html">calculator.html</a><span class="badge">demo</span></li>
+        <li><a href="./color_picker.html">color_picker.html</a><span class="badge">demo</span></li>
+        <li><a href="./countdown_timer.html">countdown_timer.html</a><span class="badge">demo</span></li>
+        <li><a href="./countdown_timer.wav">countdown_timer.wav</a><span class="badge">media</span></li>
+        <li><a href="./create.py">create.py</a><span class="badge">py</span></li>
+        <li><a href="./currency_converter.html">currency_converter.html</a><span class="badge">demo</span></li>
+        <li><a href="./dailymotivationalquotegenerator.html">dailymotivationalquotegenerator.html</a><span class="badge">demo</span></li>
+        <li><a href="./digital_clock.html">digital_clock.html</a><span class="badge">demo</span></li>
+        <li><a href="./dynamic_kanban_board_drag__drop.html">dynamic_kanban_board_drag__drop.html</a><span class="badge">demo</span></li>
+        <li><a href="./expense_tracker_localstorage.html">expense_tracker_localstorage.html</a><span class="badge">demo</span></li>
+        <li><a href="./file-drop_image_compressor.html">file-drop_image_compressor.html</a><span class="badge">demo</span></li>
+        <li><a href="./flappy_bird_clone.html">flappy_bird_clone.html</a><span class="badge">demo</span></li>
+        <li><a href="./flashcard_learning_app.html">flashcard_learning_app.html</a><span class="badge">demo</span></li>
+        <li><a href="./hangman_game.html">hangman_game.html</a><span class="badge">demo</span></li>
+        <li><a href="./index.html">index.html</a><span class="badge">file</span></li>
+        <li><a href="./interactivequizplatform.html">interactivequizplatform.html</a><span class="badge">demo</span></li>
+        <li><a href="./interactiveto-dolistwithdrag-and-drop.html">interactiveto-dolistwithdrag-and-drop.html</a><span class="badge">demo</span></li>
+        <li><a href="./markdown_previewer.html">markdown_previewer.html</a><span class="badge">demo</span></li>
+        <li><a href="./maze_generator__solver.html">maze_generator__solver.html</a><span class="badge">demo</span></li>
+        <li><a href="./memorycardmatchingchallenge.html">memorycardmatchingchallenge.html</a><span class="badge">demo</span></li>
+        <li><a href="./notepad_notes_app.html">notepad_notes_app.html</a><span class="badge">demo</span></li>
+        <li><a href="./pac-man_game_canvas.html">pac-man_game_canvas.html</a><span class="badge">demo</span></li>
+        <li><a href="./paint_clone.html">paint_clone.html</a><span class="badge">demo</span></li>
+        <li><a href="./personalexpensetrackerwithcharts.html">personalexpensetrackerwithcharts.html</a><span class="badge">demo</span></li>
+        <li><a href="./quote_generator.html">quote_generator.html</a><span class="badge">demo</span></li>
+        <li><a href="./random_password_generator.html">random_password_generator.html</a><span class="badge">demo</span></li>
+        <li><a href="./recipefinderbyingredients.html">recipefinderbyingredients.html</a><span class="badge">demo</span></li>
+        <li><a href="./simon_memory_game.html">simon_memory_game.html</a><span class="badge">demo</span></li>
+        <li><a href="./simple_bmi_calculator.html">simple_bmi_calculator.html</a><span class="badge">demo</span></li>
+        <li><a href="./simple_poll_voting_app.html">simple_poll_voting_app.html</a><span class="badge">demo</span></li>
+        <li><a href="./snake_game.html">snake_game.html</a><span class="badge">demo</span></li>
+        <li><a href="./stopwatch.html">stopwatch.html</a><span class="badge">demo</span></li>
+        <li><a href="./sudoku_solver_(basic).html">sudoku_solver_(basic).html</a><span class="badge">demo</span></li>
+        <li><a href="./tetris.html">tetris.html</a><span class="badge">demo</span></li>
+        <li><a href="./tip_calculator.html">tip_calculator.html</a><span class="badge">demo</span></li>
+        <li><a href="./to-do_list_app.html">to-do_list_app.html</a><span class="badge">demo</span></li>
+        <li><a href="./typing_speed_test.html">typing_speed_test.html</a><span class="badge">demo</span></li>
+        <li><a href="./unit_converter_(length,_weight,_temperature).html">unit_converter_(length,_weight,_temperature).html</a><span class="badge">demo</span></li>
+        <li><a href="./voice-controlledstopwatch.html">voice-controlledstopwatch.html</a><span class="badge">demo</span></li>
+        <li><a href="./workoutplannerwithtimer.html">workoutplannerwithtimer.html</a><span class="badge">demo</span></li>
+        <li><a href="./background">background</a><span class="badge">dir</span></li>
+        <li><a href="./chat">chat</a><span class="badge">dir</span></li>
+        <li><a href="./index.html">index.html</a><span class="badge">file</span></li>
+        <li><a href="./pro.html">pro.html</a><span class="badge">file</span></li>
+        <li><a href="./qrcode.html">qrcode.html</a><span class="badge">file</span></li>
+        <li><a href="./space.html">space.html</a><span class="badge">file</span></li>
+        <li><a href="./sr.html">sr.html</a><span class="badge">file</span></li>
+        <li><a href="./dist">dist</a><span class="badge">dir</span></li>
+        <li><a href="./css">css</a><span class="badge">dir</span></li>
+        <li><a href="./all.min.css">all.min.css</a><span class="badge">css</span></li>
+        <li><a href="./dracula.min.css">dracula.min.css</a><span class="badge">css</span></li>
+        <li><a href="./style.css">style.css</a><span class="badge">css</span></li>
+        <li><a href="./img">img</a><span class="badge">dir</span></li>
+        <li><a href="./js">js</a><span class="badge">dir</span></li>
+        <li><a href="./chat.v1.js">chat.v1.js</a><span class="badge">js</span></li>
+        <li><a href="./client.d.ts">client.d.ts</a><span class="badge">ts</span></li>
+        <li><a href="./client.js">client.js</a><span class="badge">js</span></li>
+        <li><a href="./framework.js">framework.js</a><span class="badge">js</span></li>
+        <li><a href="./highlight.min.js">highlight.min.js</a><span class="badge">js</span></li>
+        <li><a href="./highlightjs-copy.min.js">highlightjs-copy.min.js</a><span class="badge">js</span></li>
+        <li><a href="./mcp-client.js">mcp-client.js</a><span class="badge">js</span></li>
+        <li><a href="./photoswipe.js">photoswipe.js</a><span class="badge">js</span></li>
+        <li><a href="./providers.js">providers.js</a><span class="badge">js</span></li>
+        <li><a href="./recorder.js">recorder.js</a><span class="badge">js</span></li>
+        <li><a href="./sanitize-html.js">sanitize-html.js</a><span class="badge">js</span></li>
+        <li><a href="./sanitize-html.js.LICENSE.txt">sanitize-html.js.LICENSE.txt</a><span class="badge">txt</span></li>
+        <li><a href="./webfonts">webfonts</a><span class="badge">dir</span></li>
+        <li><a href="./docs">docs</a><span class="badge">dir</span></li>
+        <li><a href="./guides">guides</a><span class="badge">dir</span></li>
+        <li><a href="./images">images</a><span class="badge">dir</span></li>
+        <li><a href="./review">review</a><span class="badge">dir</span></li>
+        <li><a href="./README.md">README.md</a><span class="badge">md</span></li>
+        <li><a href="./__main__.py">__main__.py</a><span class="badge">py</span></li>
+        <li><a href="./async_client.html">async_client.html</a><span class="badge">doc</span></li>
+        <li><a href="./async_client.md">async_client.md</a><span class="badge">md</span></li>
+        <li><a href="./authentication.html">authentication.html</a><span class="badge">doc</span></li>
+        <li><a href="./authentication.md">authentication.md</a><span class="badge">md</span></li>
+        <li><a href="./backend_api_documentation.html">backend_api_documentation.html</a><span class="badge">doc</span></li>
+        <li><a href="./backend_api_documentation.md">backend_api_documentation.md</a><span class="badge">md</span></li>
+        <li><a href="./client.html">client.html</a><span class="badge">doc</span></li>
+        <li><a href="./client.md">client.md</a><span class="badge">md</span></li>
+        <li><a href="./client_cli.html">client_cli.html</a><span class="badge">doc</span></li>
+        <li><a href="./client_cli.md">client_cli.md</a><span class="badge">md</span></li>
+        <li><a href="./client_js.html">client_js.html</a><span class="badge">doc</span></li>
+        <li><a href="./client_js.md">client_js.md</a><span class="badge">md</span></li>
+        <li><a href="./config.html">config.html</a><span class="badge">doc</span></li>
+        <li><a href="./config.md">config.md</a><span class="badge">md</span></li>
+        <li><a href="./configuration.html">configuration.html</a><span class="badge">doc</span></li>
+        <li><a href="./configuration.md">configuration.md</a><span class="badge">md</span></li>
+        <li><a href="./docker.html">docker.html</a><span class="badge">doc</span></li>
+        <li><a href="./docker.md">docker.md</a><span class="badge">md</span></li>
+        <li><a href="./file.html">file.html</a><span class="badge">doc</span></li>
+        <li><a href="./file.md">file.md</a><span class="badge">md</span></li>
+        <li><a href="./git.html">git.html</a><span class="badge">doc</span></li>
+        <li><a href="./git.md">git.md</a><span class="badge">md</span></li>
+        <li><a href="./gui.html">gui.html</a><span class="badge">doc</span></li>
+        <li><a href="./gui.md">gui.md</a><span class="badge">md</span></li>
+        <li><a href="./image_editing.html">image_editing.html</a><span class="badge">doc</span></li>
+        <li><a href="./image_editing.md">image_editing.md</a><span class="badge">md</span></li>
+        <li><a href="./index.html">index.html</a><span class="badge">file</span></li>
+        <li><a href="./interference-api.html">interference-api.html</a><span class="badge">doc</span></li>
+        <li><a href="./interference-api.md">interference-api.md</a><span class="badge">md</span></li>
+        <li><a href="./legacy.html">legacy.html</a><span class="badge">doc</span></li>
+        <li><a href="./legacy.md">legacy.md</a><span class="badge">md</span></li>
+        <li><a href="./local.html">local.html</a><span class="badge">doc</span></li>
+        <li><a href="./local.md">local.md</a><span class="badge">md</span></li>
+        <li><a href="./mcp-integration.html">mcp-integration.html</a><span class="badge">doc</span></li>
+        <li><a href="./mcp-integration.md">mcp-integration.md</a><span class="badge">md</span></li>
+        <li><a href="./mcp-usage-guide.html">mcp-usage-guide.html</a><span class="badge">doc</span></li>
+        <li><a href="./mcp-usage-guide.md">mcp-usage-guide.md</a><span class="badge">md</span></li>
+        <li><a href="./media.html">media.html</a><span class="badge">doc</span></li>
+        <li><a href="./media.md">media.md</a><span class="badge">md</span></li>
+        <li><a href="./powered-by.html">powered-by.html</a><span class="badge">doc</span></li>
+        <li><a href="./powered-by.md">powered-by.md</a><span class="badge">md</span></li>
+        <li><a href="./providers-and-models.html">providers-and-models.html</a><span class="badge">doc</span></li>
+        <li><a href="./pydantic_ai.html">pydantic_ai.html</a><span class="badge">doc</span></li>
+        <li><a href="./pydantic_ai.md">pydantic_ai.md</a><span class="badge">md</span></li>
+        <li><a href="./ready_to_use.html">ready_to_use.html</a><span class="badge">doc</span></li>
+        <li><a href="./ready_to_use.md">ready_to_use.md</a><span class="badge">md</span></li>
+        <li><a href="./requests.html">requests.html</a><span class="badge">doc</span></li>
+        <li><a href="./requests.md">requests.md</a><span class="badge">md</span></li>
+        <li><a href="./requirements.html">requirements.html</a><span class="badge">doc</span></li>
+        <li><a href="./requirements.md">requirements.md</a><span class="badge">md</span></li>
+        <li><a href="./selecting_a_provider.html">selecting_a_provider.html</a><span class="badge">doc</span></li>
+        <li><a href="./selecting_a_provider.md">selecting_a_provider.md</a><span class="badge">md</span></li>
+        <li><a href="./template.html">template.html</a><span class="badge">doc</span></li>
+        <li><a href="./vision.html">vision.html</a><span class="badge">doc</span></li>
+        <li><a href="./vision.md">vision.md</a><span class="badge">md</span></li>
+        <li><a href="./webview.html">webview.html</a><span class="badge">doc</span></li>
+        <li><a href="./webview.md">webview.md</a><span class="badge">md</span></li>
+        <li><a href="./node_modules">node_modules</a><span class="badge">dir</span></li>
+        <li><a href="./.package-lock.json">.package-lock.json</a><span class="badge">json</span></li>
+        <li><a href="./private">private</a><span class="badge">dir</span></li>
+        <li><a href="./api_key.html">api_key.html</a><span class="badge">file</span></li>
+        <li><a href="./history.html">history.html</a><span class="badge">file</span></li>
+        <li><a href="./model.html">model.html</a><span class="badge">file</span></li>
+        <li><a href="./usage.html">usage.html</a><span class="badge">file</span></li>
+        <li><a href="./.gitignore">.gitignore</a><span class="badge">txt</span></li>
+        <li><a href="./CNAME">CNAME</a><span class="badge">txt</span></li>
+        <li><a href="./ads.txt">ads.txt</a><span class="badge">txt</span></li>
+        <li><a href="./api_key.html">api_key.html</a><span class="badge">file</span></li>
+        <li><a href="./background.html">background.html</a><span class="badge">file</span></li>
+        <li><a href="./demo.html">demo.html</a><span class="badge">file</span></li>
+        <li><a href="./home.html">home.html</a><span class="badge">file</span></li>
+        <li><a href="./manifest.html">manifest.html</a><span class="badge">file</span></li>
+        <li><a href="./package-lock.json">package-lock.json</a><span class="badge">json</span></li>
+        <li><a href="./package.json">package.json</a><span class="badge">json</span></li>
+        <li><a href="./robots.txt">robots.txt</a><span class="badge">txt</span></li>
+        <li><a href="./sitemap.py">sitemap.py</a><span class="badge">py</span></li>
+        <li><a href="./sitemap.xml">sitemap.xml</a><span class="badge">xml</span></li>
+      </ul>
+
+      <p id="docs" class="note" style="margin-top:16px">Si quieres que agrupe por carpetas o que genere este listado en formato JSON/CSV descargable, te lo hago en un click.</p>
+    </main>
+  </div>
+
+<script>
+  // para habilitar toggle en móvil (hover no siempre aplica)
+  const wrap = document.getElementById('expWrap');
+  const btn = document.getElementById('expandBtn');
+  btn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    wrap.classList.toggle('open');
+  });
+
+  // mejora: si tocas fuera, cierra
+  document.addEventListener('click', (e)=>{
+    if (!wrap.contains(e.target)) wrap.classList.remove('open');
+  });
+</script>
+</body>
+</html>
